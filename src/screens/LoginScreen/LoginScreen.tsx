@@ -5,7 +5,7 @@ import AddUser from "react-native-vector-icons/AntDesign";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../Router";
-
+import axios from "axios";
 type LoginScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
   "Login"
@@ -15,7 +15,24 @@ const LoginScreen: React.FC = () => {
   const navigation = useNavigation<LoginScreenNavigationProp>();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post("http://<your_backend_url>/login", {
+        email,
+        password,
+      });
 
+      const { token } = response.data;
+      // Save the token for later use, e.g., AsyncStorage or Redux
+      console.log("JWT Token:", token);
+
+      // Navigate to the Home screen after successful login
+      navigation.navigate("Home");
+    } catch (err) {
+      setError("Invalid credentials or server error.");
+    }
+  };
   return (
     <ImageBackground
       style={styles.container}
@@ -51,10 +68,11 @@ const LoginScreen: React.FC = () => {
           secureTextEntry
         />
       </View>
+      {error ? <Text style={{ color: "red" }}>{error}</Text> : null}
       <View style={styles.buttonContainer}>
         <Button
           mode="outlined"
-          onPress={() => navigation.navigate("Home")}
+          onPress={handleLogin} // Use the handleLogin function to call the backend
           labelStyle={{ color: "purple", fontSize: 20 }}
           contentStyle={styles.buttonContent}
           buttonColor="transparent"
