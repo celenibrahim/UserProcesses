@@ -29,7 +29,6 @@ export default function Router() {
             component={HomeScreen}
             options={{
               headerTitleAlign: "center",
-              headerShown: false,
             }}
           />
         </Stack.Navigator>
